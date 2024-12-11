@@ -1,14 +1,15 @@
-import { WebContent } from "../models/webContent.model.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import upload from "../multer/multerConfig.js";
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { DigitalContent } from "../models/digitalContent.model.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // create web content
-export const createWebContent = (req, res) => {
+export const createDigitalContent = (req, res) => {
   // Use multer to handle the image upload
   upload.single("img")(req, res, async (err) => {
     if (err) {
@@ -21,7 +22,7 @@ export const createWebContent = (req, res) => {
     console.log("Uploaded File:", req.file);
 
     // Create a new web content entry
-    const newContent = new WebContent({
+    const newContent = new DigitalContent({
       title: req.body.title,
       description: req.body.description,
       img: req.file ? req.file.path : null,
@@ -40,9 +41,9 @@ export const createWebContent = (req, res) => {
 };
 
 // Get web content
-export const getWebContent = async (req, res) => {
+export const getDigitalContent = async (req, res) => {
   try {
-    const content = await WebContent.find();
+    const content = await DigitalContent.find();
     res.status(200).json(content);
   } catch (error) {
     res.status(500).json({ message: "Error retrieving content", error });
@@ -50,7 +51,7 @@ export const getWebContent = async (req, res) => {
 };
 
 // Edit web content
-export const editWebContent = async (req, res) => {
+export const editDigitalContent = async (req, res) => {
   const { id } = req.params;
 
   // Use multer to handle the image upload
@@ -72,7 +73,7 @@ export const editWebContent = async (req, res) => {
     };
 
     try {
-      const updatedContent = await WebContent.findByIdAndUpdate(
+      const updatedContent = await DigitalContent.findByIdAndUpdate(
         id,
         updateData,
         { new: true }
@@ -88,18 +89,18 @@ export const editWebContent = async (req, res) => {
 };
 
 // Delete web content
-export const deleteWebContent = async (req, res) => {
+export const deleteDigitalContent = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const deletedContent = await WebContent.findByIdAndDelete(id);
+    const deletedContent = await DigitalContent.findByIdAndDelete(id);
     if (!deletedContent) {
       return res.status(404).json({ message: "Content not found" });
     }
 
     // Delete the associated image file if it exists
     if (deletedContent.img) {
-      const imagePath = path.join(__dirname, '..', deletedContent.img); 
+      const imagePath = path.join(__dirname, "..", deletedContent.img);
 
       fs.unlink(imagePath, (err) => {
         if (err) {
@@ -112,6 +113,8 @@ export const deleteWebContent = async (req, res) => {
 
     res.status(200).json({ message: "Content deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting content", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting content", error: error.message });
   }
 };
