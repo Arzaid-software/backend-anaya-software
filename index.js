@@ -5,10 +5,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import adminRoute from "./routes/admin.route.js";
-import webContentRoute from "./routes/webContent.route.js";   
+import webContentRoute from "./routes/webContent.route.js";
 import educationContentRoute from "./routes/educationContent.route.js";
 import digitalContentRoute from "./routes/digitalContent.route.js";
 import enquiryFormRoute from "./routes/enquiryForm.route.js";
+import navigationCategoryRoute from "./routes/navigationCategory.route.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -47,6 +48,7 @@ app.use("/api/v1/web-content", webContentRoute);
 app.use("/api/v1/education-content", educationContentRoute);
 app.use("/api/v1/digital-content", digitalContentRoute);
 app.use("/api/v1/enquiry-form", enquiryFormRoute);
+app.use("/api/v1/navigation-category", navigationCategoryRoute);
 
 // Listening to the server
 app.listen(PORT, () => {
